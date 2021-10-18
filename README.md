@@ -1,5 +1,7 @@
 # learnsql
 
+This project is still under development. Some components may or may not work as intended and a security evaluation has not been performed. Use at your own risk and no warranty is given. 
+
 This requires a MySQL databases to interface with that has a user account with limited SELECT only permissions. There is currently no counter measures in place to prevent SQL Injection so make sure to avoid connecting to an important database.
 
 You will also need to add the following constants in your php.ini file:
