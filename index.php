@@ -3,166 +3,119 @@
 <head>
 
 <title>Learn SQL</title>
-<link rel="stylesheet" href="css/prism.css" />
-<style>
-   body {
-      font-family: arial;
-      background-color: #ccc;
-      color: #333;
-   }
-   div#main {
-      display: inline-block;
-      width: 700px;
-      border-left: 1px solid white;
-      padding-left: 50px;
-      text-align: left;
-   }
-   div#left {
-      display: inline-block;
-      width: 250px;
-      text-align: left;
-      vertical-align: top;
-   }
-   .section_item, .section_header {
-      border: 1px solid white;
-      border-top: 0px;
-      padding: 10px;
-      text-align: left;
-   }
-   .section_header {
-      font-weight: bold;
-   }
-   .section_item {
-      padding-left: 20px;
-   }
-   .CodeMirror {
-      font-size: 12px;
-      height: auto;
-   }
-   table {
-      background-color: #222;
-      color: #ccc;
-      border-collapse: collapse;
-   }
-   table tr {
 
-   }
-   table tr:first-child {
-      background-color: #111;
-   }
-   table tr:first-child th {
-      border-radius: 5px 5px 0px 0px;
-      border: 1px solid #ccc;
-   }
-   table tr th {
-      font-weight: bold;
-   }
-   table tr td,th {
-      border: 1px solid #ccc;
-      padding-left: 5px;
-      padding-right: 5px;
-      width: 1%;
-      white-space: nowrap;
-   }
-   #submit_button {
-      background-color: green;
-      color: white;
-      border: 1px solid darkgreen;
-      border-radius: 5px;
-      padding: 5px;
-   }
-</style>
+<link rel="stylesheet" href="css/prism.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="lib/codemirror.css">
+<link rel="stylesheet" href="theme/oceanic-next.css">
 
 <script src="lib/codemirror.js"></script>
 <script src="mode/sql/sql.js"></script>
-<link rel="stylesheet" href="lib/codemirror.css">
-<link rel="stylesheet" href="theme/ambiance.css">
 
 </head>
 
 <body>
 
-<?php
-	// Load Configuration Settings 
-	function loadConfig( $vars = array() ) {
-	    foreach( $vars as $v ) {
-	        define( $v, get_cfg_var( "learnsql.cfg.$v" ) );
-	    }
-	}
-
-	// Load Database Connection Info
-	$cfg = array( 'DB_HOST', 'DB_USER', 'DB_PASS' );
-	loadConfig( $cfg );
-?>
-
    <div id="left">
+      <h3>Lessons</h3>
       <div class="section_header">Simple Queries</div>
-      <div class="section_item">Simple Queries 1</div>
-      <div class="section_item">Simple Queries 2</div>
-      <div class="section_item">Simple Queries 3</div>
+      <div class="section_item">SELECT *</div>
+      <div class="section_item">Pulling Specific Columns</div>
+      <div class="section_item">Column Aliases</div>
+      <div class="section_item">SELECT Distinct</div>
       <div class="section_header">Filtering Queries</div>
       <div class="section_item">The WHERE clause</div>
       <div class="section_item">IN Operator</div>
       <div class="section_item">AND...OR Logic</div>
+      <div class="section_header">Intermediate Queries</div>
+      <div class="section_item">Sub-Queries</div>
+      <div class="section_item">Unions</div>
+      <div class="section_item">Joins</div>
       <div class="section_header">Advanced Queries</div>
       <div class="section_item">Grouping and Aggregates</div>
+      <div class="section_item">Common Table Expressions</div>
+      <div class="section_item">Recursive Queries</div>
    </div>
+
    <div id="main">
-   <h2>CSCI 3410 Introduction to Databases</h2>
-   <p>Learning SQL</p>
-   <pre><code class="language-sql">USE Chattahoochee;</code></pre>
-   <form action="" method="post">
-   <textarea id="code" name="code" spellcheck="false"><?php echo($_POST["code"]); ?></textarea>
-   <br /><br />
-   <input id="submit_button" type="submit" name"submit" />
-   <br /><br />
+
+      <h2>CSCI 3410 Introduction to Databases</h2>
+   
+      <p>Learning SQL</p>
+
+      <pre><code class="language-sql">USE Chattahoochee;</code></pre>
+   
+      <form action="" method="post">
+   
+         <textarea id="code" name="code" spellcheck="false"><?php echo($_POST["code"]); ?></textarea>
+   
+         <br />
+         <input type="checkbox" id="cbox_inc_output" name="cbox_inc_output" value="inc_output" checked />
+         <label for=cbox_inc_output">Include Query Output</label>
+         <br /><br />
+   
+         <input id="submit_button" type="submit" name"submit" />
+   
+         <br /><br />
+   
    <?php
-	if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
+   require 'config_loader.php';
 
-	$options = [
-	    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-	    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-	    \PDO::ATTR_EMULATE_PREPARES   => false,
-	];
+	if (( $_SERVER['REQUEST_METHOD'] == 'POST') and isset($_POST["code"])) {
 
-	$dsn = constant("DB_HOST");
+      $keys = array();
+      $headerData = "";
+      $data = "";
 
-	try {
-	     $pdo = new PDO($dsn, constant("DB_USER"), constant("DB_PASS"), $options);
-	$sql_text = $_POST["code"];
-	$sql = $pdo->query($sql_text);
-	$keys = array();
-	$data = "";
-	$headerData = "";
-	while($row=$sql->fetch())
-	{
-		if(count($keys) == 0)
-		{
-			$headerData .= "<tr>";
-			foreach($row as $k=>$v)
-			{
-				$keys[] = $k;
-				$headerData .= '<th>' .$k .'</th>';
-			}
-			$headerData .= '</tr>';
-		}
-		$data .= "<tr>";
-		foreach ($keys as $key)
-		{
-			$data .= "<td>" .$row[$key]."</td>";
-		}
-		$data .="</tr>";
-	}
-	echo '<table>';
-	echo $headerData;
-	echo $data;
-	echo '</table>';
+      try {
+         $sql_text = $_POST["code"];
+         require 'db.php';   
+      
+         foreach($result as $row)
+         {
+            if(count($keys) == 0)
+            {
+               $headerData .= "<tr>";
+               foreach($row as $k=>$v)
+               {
+                  $keys[] = $k;
+                  $headerData .= '<th>' .$k .'</th>';
+               }
+               $headerData .= '</tr>';
+            }
+            $data .= "<tr>";
+            foreach ($keys as $key)
+            {
+               $data .= "<td>" .$row[$key]."</td>";
+            }
+            $data .="</tr>";
+         }
+         
+         $include_output = $_POST['cbox_inc_output'];
+         if ($include_output == "inc_output") {
+            echo '<table>';
+            echo $headerData;
+            echo $data;
+            echo '</table>';
+         }
 
+         $hash_data = md5($data);
+         $hash_headerData = md5($headerData);
+         $SQL_QUERY_CHECKS = array();
+         require 'check_sql.php';
 
-	} catch (PDOException $e) {
-	     echo $e->getMessage();
-	}
-}
+         echo "<h3>Header Data Hash</h3><pre>$hash_headerData</pre>";
+         echo "<h3>Data Hash</h3><pre>$hash_data</pre>";
+         echo "<h3>SQL Query Checks</h3><pre>";
+         foreach ($SQL_QUERY_CHECKS as $key => $value) {
+            echo "Key: $key => Value: $value\n";
+         }
+         echo "</pre>";
+
+      } catch (PDOException $e) {
+         echo $e->getMessage();
+      }
+   }
    ?>
 
    </form>
@@ -184,7 +137,7 @@ window.onload = function() {
     matchBrackets : true,
     autofocus: true,
     extraKeys: {"Ctrl-Space": "autocomplete"},
-    theme: "ambiance"
+    theme: "oceanic-next"
   });
   
 };

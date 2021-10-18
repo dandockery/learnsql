@@ -1,0 +1,63 @@
+body {
+    font-family: arial;
+    background-color: #ccc;
+    color: #333;
+ }
+ div#main {
+    display: inline-block;
+    width: 70%;
+    padding-left: 50px;
+    text-align: left;
+ }
+ div#left {
+    display: inline-block;
+    width: 250px;
+    text-align: left;
+    vertical-align: top;
+ }
+ .section_item {
+    padding: 10px;
+    text-align: left;
+ }
+ .section_header {
+    font-weight: bold;
+ }
+ .section_item {
+    padding-left: 20px;
+ }
+ .CodeMirror {
+    font-size: 12px;
+    height: auto;
+ }
+ table {
+    background-color: #222;
+    color: #ccc;
+    border-collapse: collapse;
+ }
+ table tr {
+
+ }
+ table tr:first-child {
+    background-color: #111;
+ }
+ table tr:first-child th {
+    border-radius: 5px 5px 0px 0px;
+    border: 1px solid #ccc;
+ }
+ table tr th {
+    font-weight: bold;
+ }
+ table tr td,th {
+    border: 1px solid #ccc;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 1%;
+    white-space: nowrap;
+ }
+ #submit_button {
+    background-color: green;
+    color: white;
+    border: 1px solid darkgreen;
+    border-radius: 5px;
+    padding: 5px;
+ }
